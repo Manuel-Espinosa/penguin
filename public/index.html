@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+    <title>Bienvenido</title>
+  </head>
+  <body>
+    <!--Nav Bar -->
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="https://bulma.io">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/2/21/Tescha2.jpg"
+            width="112"
+            height="28"
+          />
+        </a>
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item"> Inicio </a>
+
+          <a class="navbar-item"> Alumnos </a>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> Mas </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item"> About </a>
+              <a class="navbar-item"> Contribuir </a>
+              <a class="navbar-item"> ISC </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item"> Reportar problema </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="button is-success">
+                <strong>Registrarse</strong>
+              </a>
+              <a class="button is-light"> Iniciar Sesión </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Body Container -->
+    <div class="container" id="bodycontainer">
+      <!--welcome container-->
+      <div class="container">
+        <h1 class="title is-success">Bienvenido</h1>
+        <h2 class="subtitle">Registra tu asistencia</h2>
+      </div>
+      <!--tux container-->
+      <div class="container" id="model-container">
+        <script type="module">
+          let camera, scene, renderer;
+          let mesh;
+
+          const init = () => {
+            //creating a container
+
+            const container = document.createElement("div");
+            container.classList.add("container");
+            const parent = document.getElementById("model-container");
+            parent.appendChild(container);
+
+            //creating a scene
+
+            scene = new THREE.Scene();
+
+            //adding a camera
+            const aspectRatio = window.innerWidth / window.innerHeight;
+            camera = new THREE.PerspectiveCamera(70, aspectRatio, 0.01, 40);
+
+            //renderer
+
+            renderer = new THREE.WebGLRenderer({
+              antialias: true,
+              alpha: true,
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            //enlable webxr
+            renderer.xr.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            //adding ligth
+
+            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+            light.position.set(0.5, 1, 0.25);
+            scene.add(light);
+
+            //adding a 3D model
+            const modelPath = "/media/tux/tux.gltf";
+
+            //loader
+            let loader = new THREE.GLTFLoader();
+            loader.load(
+              modelPath,
+              (gltf) => {
+                scene.add(gltf.scene);
+
+                gltf.scene.position.z = -0.5;
+                /*
+                gltf.scene.position.y = -1.5;
+                */
+              },
+              (xhr) => {
+                console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                console.log('aspectRatio = ' + aspectRatio);
+              },
+              (error) => {
+                console.log(error);
+              }
+            );
+
+            //adding mesh
+            /*
+      
+              const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+              const material = new THREE.MeshBasicMaterial({ color: 0xe06666 });
+              const cubeMesh = new THREE.Mesh(geometry, material);
+              scene.add(cubeMesh);
+              cubeMesh.position.set(0, 0, -1);
+              
+            /*
+
+            const button = ARButton.createButton(renderer);
+            document.body.appendChild(button);
+            button.className = "button has-background-warning";
+            */
+
+            const onWindowResize = () => {
+              camera.aspect = aspectRatio;
+              camera.updateProjectionMatrix();
+              renderer.setSize(window.innerWidth, window.innerHeight);
+            };
+            
+
+            window.addEventListener("resize", onWindowResize, false);
+          };
+/*
+          const onWindowResize = () => {
+            camera.aspect = aspectRatio;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+          };
+*/
+          const animate = () => {
+            renderer.setAnimationLoop(render);
+          };
+
+          const render = () => {
+            renderer.render(scene, camera);
+          };
+
+          init();
+          animate();
+        </script>
+      </div>
+    </div>
+
+    <!-- Fotter Container -->
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Proyecto</strong> por
+          <a href="https://tescha.edomex.gob.mx/ing-sistemas-computacionales"
+            >I.C.S</a
+          >. El código fuente esta bajo licencia
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
