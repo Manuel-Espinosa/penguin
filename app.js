@@ -1,10 +1,24 @@
 import express from "express";
+import bodyParser from "body-parser";
+import { productRoutes } from "./routes/products-routes.js";
+import { makerRoutes } from "./routes/maker-routes.js";
+import { createStudent, getStudent, getAllStudents} from "./mongoose.js";
+const PORT = 5000;
 const app = express();
-const port = 6060;
 
-app.use(express.static("./public"));
+app.use(bodyParser.json());
 
-app.listen(port, () => {
-    console.log(`Listening on PORT ${port}`);
-})
+
+app.use((req,res,next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
+app.post("/api/students/createStudent", createStudent);
+app.get("/api/students/:id", getStudent);
+app.get("/api/students/", getAllStudents);
+
+
+app.listen(PORT, () => {
+  console.log("Server Running on port " + PORT);
+});
 
